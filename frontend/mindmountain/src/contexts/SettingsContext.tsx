@@ -10,6 +10,8 @@ interface SettingsContextType {
     setAnimationSpeed: (speed: AnimationSpeed) => void;
     soundEnabled: boolean;
     setSoundEnabled: (enabled: boolean) => void;
+    voiceEnabled: boolean;
+    setVoiceEnabled: (enabled: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -18,12 +20,14 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const [theme, setTheme] = useState<CardTheme>(DEFAULT_THEME);
     const [animationSpeed, setAnimationSpeed] = useState<AnimationSpeed>('normal');
     const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+    const [voiceEnabled, setVoiceEnabled] = useState<boolean>(true);
 
     return (
         <SettingsContext.Provider value={{
             theme, setTheme,
             animationSpeed, setAnimationSpeed,
-            soundEnabled, setSoundEnabled
+            soundEnabled, setSoundEnabled,
+            voiceEnabled, setVoiceEnabled
         }}>
             {children}
         </SettingsContext.Provider>

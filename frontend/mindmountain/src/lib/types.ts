@@ -52,3 +52,20 @@ export const DARK_THEME: CardTheme = {
 };
 
 export const AVAILABLE_THEMES = [DEFAULT_THEME, DARK_THEME];
+
+export interface Level {
+    id: number;
+    name: string;
+    cardCount: number;
+    description: string;
+}
+
+export const LEVELS: Level[] = [
+    { id: 1, name: 'Novice', cardCount: 3, description: 'Quick warmup' },
+    { id: 2, name: 'Beginner', cardCount: 5, description: 'Getting started' },
+    { id: 3, name: 'Intermediate', cardCount: 10, description: 'Building focus' },
+    { id: 4, name: 'Advanced', cardCount: 20, description: 'Serious training' },
+    { id: 5, name: 'Expert', cardCount: 30, description: 'Memory athlete' },
+    { id: 6, name: 'Grandmaster', cardCount: 40, description: 'Elite challenge' },
+    { id: 7, name: 'Mind Mountain', cardCount: 52, description: 'The summit' },
+];

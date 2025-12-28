@@ -5,18 +5,22 @@ import { useKeyboard } from '../../hooks/useKeyboard';
 import { useSettings } from '../../contexts/SettingsContext';
 import { useSound } from '../../hooks/useSound';
 
+import { useVoice } from '../../hooks/useVoice';
+
 interface ReviewViewProps {
     card: Card;
+    deck: Card[];
     index: number;
     total: number;
-    onResult: (correct: boolean) => void;
+    onResult: (success: boolean) => void;
 }
 
-export function ReviewView({ card, index, total, onResult }: ReviewViewProps) {
+export function ReviewView({ card, deck, index, total, onResult }: ReviewViewProps) {
     const [isRevealed, setIsRevealed] = useState(false);
     const [activeKey, setActiveKey] = useState<string | null>(null);
     const { animationSpeed } = useSettings();
     const { playFlip, playCorrect, playIncorrect } = useSound();
+    const { speakCard } = useVoice();
 
     const speedClass = {
         'slow': 'duration-700',
@@ -33,6 +37,7 @@ export function ReviewView({ card, index, total, onResult }: ReviewViewProps) {
     const handleReveal = () => {
         if (!isRevealed) {
             playFlip();
+            speakCard(card);
             setIsRevealed(true);
         }
     };
@@ -64,19 +69,50 @@ export function ReviewView({ card, index, total, onResult }: ReviewViewProps) {
         // We'll rely on Key from parent.
     }
 
+    const prevCard = deck[index - 1];
+    const nextCard = deck[index + 1];
+
     return (
-        <div className="flex flex-col items-center space-y-8 animate-in slide-in-from-right duration-300">
-            <div className="flex flex-col items-center space-y-2">
+        <div className="flex flex-col items-center space-y-8 animate-in slide-in-from-right duration-300 w-full max-w-2xl relative">
+            <div className="flex flex-col items-center space-y-2 z-10 relative">
                 <span className="text-xs font-bold uppercase tracking-widest text-text-muted">Recall Phase</span>
                 <h2 className="text-2xl font-display font-bold text-text-main">Card {index + 1} of {total}</h2>
             </div>
 
-            <div className="relative">
-                <PlayingCard
-                    card={card}
-                    isFaceUp={isRevealed}
-                    className={`transition-all ${speedClass}`}
-                />
+            <div className="relative h-96 w-full flex justify-center items-center">
+                {/* Previous Card (Left, Faded, Tilted) */}
+                {prevCard && (
+                    <div className="absolute left-1/2 -translate-x-[120%] scale-90 opacity-40 blur-[1px] select-none pointer-events-none transition-all duration-500">
+                        <PlayingCard
+                            card={prevCard}
+                            isFaceUp={true}
+                            className="shadow-sm"
+                        />
+                    </div>
+                )}
+
+                {/* Current Card (Centered) */}
+                <div className="relative z-20">
+                    <PlayingCard
+                        card={card}
+                        isFaceUp={isRevealed}
+                        className={`transition-all ${speedClass}`}
+                    />
+                </div>
+
+                {/* Next Card (Right, Face Down, Tilted Stack) */}
+                {nextCard && (
+                    <div className="absolute left-1/2 translate-x-[20%] scale-90 opacity-40 select-none pointer-events-none transition-all duration-500">
+                        <PlayingCard
+                            card={nextCard}
+                            isFaceUp={false}
+                            className="shadow-sm"
+                        />
+                        {/* Stack effect layers (fake depth) */}
+                        <div className="absolute top-1 left-1 w-full h-full bg-white rounded-xl border border-gray-200 -z-10" />
+                        <div className="absolute top-2 left-2 w-full h-full bg-white rounded-xl border border-gray-200 -z-20" />
+                    </div>
+                )}
             </div>
 
             {!isRevealed ? (

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Card } from '../../lib/types';
 import { PlayingCard } from '../PlayingCard';
 import { useKeyboard } from '../../hooks/useKeyboard';
+import { useVoice } from '../../hooks/useVoice';
 import { useSound } from '../../hooks/useSound';
 
 interface MemorizeViewProps {
@@ -14,6 +15,11 @@ interface MemorizeViewProps {
 export function MemorizeView({ card, index, total, onNext }: MemorizeViewProps) {
     const [isActive, setIsActive] = useState(false);
     const { playSwipe } = useSound();
+    const { speakCard } = useVoice();
+
+    useEffect(() => {
+        speakCard(card);
+    }, [card, speakCard]);
 
     const handleNext = () => {
         playSwipe();

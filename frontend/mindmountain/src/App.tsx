@@ -4,6 +4,7 @@ import { MemorizeView } from './components/Training/MemorizeView';
 import { ReviewView } from './components/Training/ReviewView';
 import { SummaryView } from './components/Training/SummaryView';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
+import { SettingsBar } from './components/SettingsBar';
 
 // We separate InnerApp to access the SettingsContext provided by App
 function InnerApp() {
@@ -15,9 +16,15 @@ function InnerApp() {
 
       {/* Header / Nav Area */}
       <nav className="w-full max-w-5xl flex justify-between items-center mb-16">
-        <h1 className="text-2xl font-bold tracking-tight cursor-pointer" onClick={resetSession}>
-          MindMountain
-        </h1>
+        <div className="flex items-center gap-8">
+          <h1 className="text-2xl font-bold tracking-tight cursor-pointer" onClick={resetSession}>
+            MindMountain
+          </h1>
+          <div className="hidden md:block">
+            <SettingsBar />
+          </div>
+        </div>
+
         <div className="flex gap-4">
           <button className="text-sm font-medium opacity-60 hover:opacity-100 transition-opacity">
             Current Phase: <span className="uppercase font-bold">{session.phase}</span>
@@ -43,7 +50,9 @@ function InnerApp() {
 
         {session.phase === 'review' && (
           <ReviewView
+            key={session.currentIndex}
             card={session.deck[session.currentIndex]}
+            deck={session.deck}
             index={session.currentIndex}
             total={session.deck.length}
             onResult={recordResult}
