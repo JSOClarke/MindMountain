@@ -1,5 +1,7 @@
-import type { TrainingSession } from '../../lib/types';
+import { useEffect, useRef } from 'react';
+import { LEVELS, type TrainingSession } from '../../lib/types'; // Add LEVELS import
 import { PlayingCard } from '../PlayingCard';
+import { useHistory } from '../../hooks/useHistory';
 
 interface SummaryViewProps {
     session: TrainingSession;
@@ -10,6 +12,22 @@ export function SummaryView({ session, onRestart }: SummaryViewProps) {
     const total = session.deck.length;
     const correctCount = Object.values(session.results).filter(Boolean).length;
     const percentage = Math.round((correctCount / total) * 100);
+    const { addEntry } = useHistory();
+    const hasSavedRef = useRef(false);
+
+    useEffect(() => {
+        if (!hasSavedRef.current) {
+            const level = LEVELS.find(l => l.cardCount === total) || { name: 'Custom' };
+            addEntry({
+                levelName: level.name,
+                cardCount: total,
+                correctCount,
+                totalCards: total,
+                accuracy: percentage
+            });
+            hasSavedRef.current = true;
+        }
+    }, [total, correctCount, percentage, addEntry]);
 
     const missedCards = session.deck.filter(card => session.results[card.id] === false);
 

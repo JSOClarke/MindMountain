@@ -69,3 +69,13 @@ export const LEVELS: Level[] = [
     { id: 6, name: 'Grandmaster', cardCount: 40, description: 'Elite challenge' },
     { id: 7, name: 'Mind Mountain', cardCount: 52, description: 'The summit' },
 ];
+
+export interface HistoryEntry {
+    id: string;
+    timestamp: number;
+    levelName: string;
+    cardCount: number;
+    correctCount: number;
+    totalCards: number;
+    accuracy: number;
+}
